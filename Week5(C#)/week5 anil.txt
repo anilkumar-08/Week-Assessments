@@ -1,0 +1,458 @@
+Create a program for managing student records using file I/O streams and
+serialization. Define a class "Student" with properties like Name, ID, and GPA.
+Implement methods to serialize and deserialize student objects to/from a binary file.
+Allow users to add, view, update, and delete student records, maintaining data
+integrity using file I/O.
+
+Program.cs
+
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Runtime.Serialization;
+using System.Runtime.Serialization.Formatters.Binary;
+
+class Program
+{
+    static List<Student> students = new List<Student>();
+
+    static void Main()
+    {
+        LoadData();
+
+        while (true)
+        {
+            Console.WriteLine("1. Add Student\n2. View Students\n3. Update Student\n4. Delete Student\n5. Exit");
+            int choice = Convert.ToInt32(Console.ReadLine());
+
+            switch (choice)
+            {
+                case 1:
+                    AddStudent();
+                    break;
+                case 2:
+                    ViewStudents();
+                    break;
+                case 3:
+                    UpdateStudent();
+                    break;
+                case 4:
+                    DeleteStudent();
+                    break;
+                case 5:
+                    SaveData();
+                    return;
+            }
+        }
+    }
+
+    static void AddStudent()
+    {
+        Console.Write("Enter Name: ");
+        string name = Console.ReadLine();
+        Console.Write("Enter ID: ");
+        int id = Convert.ToInt32(Console.ReadLine());
+        Console.Write("Enter GPA: ");
+        double gpa = Convert.ToDouble(Console.ReadLine());
+
+        students.Add(new Student { Name = name, ID = id, GPA = gpa });
+    }
+
+    static void ViewStudents()
+    {
+        foreach (Student student in students)
+        {
+            Console.WriteLine($"Name: {student.Name}, ID: {student.ID}, GPA: {student.GPA}");
+        }
+    }
+
+    static void UpdateStudent()
+    {
+        Console.Write("Enter ID of student to update: ");
+        int id = Convert.ToInt32(Console.ReadLine());
+        Student student = students.Find(s => s.ID == id);
+
+        if (student != null)
+        {
+            Console.Write("Enter new Name: ");
+            string name = Console.ReadLine();
+            Console.Write("Enter new GPA: ");
+            double gpa = Convert.ToDouble(Console.ReadLine());
+
+            student.Name = name;
+            student.GPA = gpa;
+        }
+        else
+        {
+            Console.WriteLine("Student not found.");
+        }
+    }
+
+    static void DeleteStudent()
+    {
+        Console.Write("Enter ID of student to delete: ");
+        int id = Convert.ToInt32(Console.ReadLine());
+        Student student = students.Find(s => s.ID == id);
+
+        if (student != null)
+        {
+            students.Remove(student);
+            Console.WriteLine("Student deleted.");
+        }
+        else
+        {
+            Console.WriteLine("Student not found.");
+        }
+    }
+
+    static void LoadData()
+    {
+        if (File.Exists("students.dat"))
+        {
+            using (FileStream fs = new FileStream("students.dat", FileMode.Open))
+            {
+                BinaryFormatter bf = new BinaryFormatter();
+                students = (List<Student>)bf.Deserialize(fs);
+            }
+        }
+    }
+
+    static void SaveData()
+    {
+        using (FileStream fs = new FileStream("students.dat", FileMode.Create))
+        {
+            BinaryFormatter bf = new BinaryFormatter();
+            bf.Serialize(fs, students);
+        }
+    }
+}
+
+
+Student.cs
+
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Runtime.Serialization;
+using System.Runtime.Serialization.Formatters.Binary;
+
+[Serializable]
+class Student
+{
+    public string Name { get; set; }
+    public int ID { get; set; }
+    public double GPA { get; set; }
+}
+
+
+
+
+Create a scenario where you need to model a "Person" class with properties like
+Name, Age, and Address. Implement multiple interfaces (e.g., IDriver, IStudent,
+IEmployee) to represent different roles that a person can have. Create a class that
+inherits from Person and implements multiple interfaces, showcasing multiple
+inheritance through interfaces.
+
+Program.cs
+
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace ConsoleApp2
+{
+    internal class Program
+    {
+       private static void MultipleInterface()
+            {
+            var PersonRole = new Person()
+            {
+                Name = "Mahesh",
+                Age = 21,
+                Address = "Hyderabad"
+            };
+            Console.WriteLine($" Name: {PersonRole.Name}\n Age: {PersonRole.Age}\n Address: {PersonRole.Address}\n");
+            Console.WriteLine("\n\n**Driving interface methods**");
+            PersonRole.Drive();
+            PersonRole.StartDriveAge();
+            PersonRole.StopDrive();
+            PersonRole.DriverAddress();
+
+            Console.WriteLine("\n\n**Student interface methods**");
+            PersonRole.StudiesTime();
+            PersonRole.StudentAge();
+            PersonRole.DoHomeWork();
+
+            Console.WriteLine("\n\n**Employee interface methods**");
+            PersonRole.Work();
+            PersonRole.AttendMeeting();
+            PersonRole.RequestHoliday();
+        }
+    }
+}
+
+
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+Person.cs
+
+namespace ConsoleApp2
+{
+    internal class Person
+    {
+        public string Name { get; set; }
+        public int Age { get; set; }
+        public String Address { get; set; }
+    }
+}
+
+IStudent.cs
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace ConsoleApp2
+{
+    public interface IStudent
+    {
+        void StudiesTime();
+        void StudentAge();
+        void DoHomeWork();
+
+    }
+}
+
+IDriver.cs
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace ConsoleApp2
+{
+    public interface IDriver
+    {
+        void Drive();
+        void StartDriveAge();
+        void StopDrive();
+        void DriverAddress();
+
+    }
+}
+
+IEmployee.cs
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace ConsoleApp2
+{
+    internal interface IEmployee
+    {
+        void Work();
+        void AttendMeeting();
+        void RequestHoliday();
+
+    }
+}
+
+
+Build a generic collection to manage a library's inventory of books. Create a class
+"Book" with properties like Title, Author, and ISBN. Implement a generic collection
+(e.g., List<Book>) to add, remove, search, and display books. Utilize generics to
+ensure type safety and efficient data management.
+
+solution:
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+ 
+
+namespace ConsoleApp2
+{
+    internal class Program
+    {
+        static void Main(string[] args)
+        {
+        private static void BookManagementSystem()
+        {
+            BookManage bookmanage = new BookManage();
+            while (true)
+            {
+                Console.WriteLine("1) Add Book in bookstall");
+                Console.WriteLine("2) Remove Book from bookstall");
+                Console.WriteLine("3) Find the books in bookstall");
+                Console.WriteLine("4) Display all the books in bookstall");
+                Console.WriteLine("5) Exit");
+                Console.WriteLine("Enter the possible Option here");
+                string choice = Console.ReadLine();
+                switch (choice)
+                {
+                    case "1":
+                        Console.WriteLine("Enter Book name:");
+                        string title = Console.ReadLine();
+                        Console.WriteLine("Enter Author of the book:");
+                        string author = Console.ReadLine();
+                        Console.WriteLine("Enter ISBN of the book:");
+                        string isbn = Console.ReadLine();
+                        IBook newitem = new BookItems
+                        {
+                            Title = title,
+                            Author = author,
+                            ISBN = isbn,
+                        };
+                        bookmanage.Add(newitem);
+                        break;
+                    case "2":
+                        Console.WriteLine("Enter book to Remove:");
+                        string remove = Console.ReadLine();
+                        bookmanage.RemoveBook(remove);
+                        break;
+                    case "3":
+                        Console.WriteLine("Enter which isbn book to view:");
+                        string view = Console.ReadLine();
+                        bookmanage.Search(view);
+                        break;
+                    case "4":
+                        bookmanage.ViewBook();
+                        break;
+                    case "5":
+                        return;
+                    default:
+                        Console.WriteLine("Invalid");
+                        break;
+                }
+                Console.WriteLine("Press enter to continue...");
+                Console.ReadLine();
+            }
+        }
+}
+}
+}
+}
+
+ 
+
+ 
+
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+ 
+
+namespace C_5thWeekCodingChallenge
+{
+    class BookItems : IBook
+    {
+        public string Title { get; set; }
+        public string Author { get; set; }
+        public string ISBN { get; set; }
+    }
+}
+
+ 
+
+ 
+
+ 
+
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+ 
+
+namespace C_5thWeekCodingChallenge
+{
+    internal class BookManage
+    {
+        private List<IBook> Books;
+        public BookManage()
+        {
+            Books = new List<IBook>();
+        }
+        public void Add(IBook item)
+        {
+            Books.Add(item);
+            Console.WriteLine("Book is Added");
+        }
+        public void RemoveBook(string ISBN)
+        {
+            IBook booktoRemove = Books.Find(book => book.ISBN == ISBN);
+            if (booktoRemove != null)
+            {
+                Books.Remove(booktoRemove);
+                Console.WriteLine("Book Removed from Bookstall");
+            }
+            else
+            {
+                Console.WriteLine("Book with ISBN Number not found");
+            }
+        }
+        public void Search(string ISBN)
+        {
+            IBook findbook = Books.Find(book => book.ISBN == ISBN);
+            if (findbook != null)
+            {
+                Console.Write($"{findbook.Title} by {findbook.Author} and {findbook.ISBN}\n");
+            }
+            else
+            {
+                Console.WriteLine("Book is not found in bookstall");
+            }
+        }
+        public void ViewBook()
+        {
+            Console.WriteLine("The Total Books are:");
+            foreach (var bookss in Books)
+            {
+                Console.WriteLine($"{bookss.Title} by {bookss.Author} (ISBN: {bookss.ISBN})");
+            }
+        }
+    }
+}
+
+ 
+
+ 
+
+ 
+
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+ 
+
+namespace C_5thWeekCodingChallenge
+{
+    interface IBook
+    {
+        string Title { get; set; }
+        string Author { get; set; }
+        string ISBN { get; set; }
+    }
+}
+
+
