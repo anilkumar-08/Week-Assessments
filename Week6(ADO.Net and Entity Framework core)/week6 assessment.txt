@@ -1,0 +1,502 @@
+Week 6 Assessment
+G.Anil Kumar
+E.id:1033310
+
+Section-1
+Problem 1: Online Inventory Management System
+You are tasked with creating an Online Inventory Management System for a retail store. The
+system should allow users to add new products to the database, update existing product
+details, view the current inventory, and generate reports on product sales. Design and
+implement the ADO.NET data access layer to interact with the database, perform CRUD
+(Create, Read, Update, Delete) operations, and retrieve data for generating sales reports.
+
+Program.cs
+
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace Week6Assessment
+{
+    internal class Program
+    {
+        static string connectionstring = "Data Source=ICS-LT-17L96V3\\SQLEXPRESS;" +
+            "Initial catalog=assessmentdb; Integrated Security=True;";
+        static void Main(string[] args)
+        {
+
+              Connected.enterproductinfo(1, "Watch", 3500, 2);
+                // Connected.retreiveproducts();
+                //Connected.updateproductqty();
+               // Connected.deleterecords(1);
+                //Connected.entersalesinfo(20, 1, 2, 3500);
+                // Connected.retreivesales();
+            
+
+        }
+    }
+}
+
+
+Connected.cs
+
+using System;
+using System.Collections.Generic;
+using System.Data.SqlClient;
+using System.Data;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace Week6Assessment
+{
+    internal class Connected
+
+    {
+        static string connectionstring = "Data Source=ICS-LT-17L96V3\\SQLEXPRESS;" +
+           "Initial catalog=assessmentdb; Integrated Security=True;";
+        public static void enterproductinfo(int productid, string productname, int price, int quantity)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionstring))
+                {
+                    SqlCommand cmd = new SqlCommand();
+                    cmd.Connection = con;
+                    cmd.CommandText = "usp_insertproductinfo";
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    SqlParameter param1 = new SqlParameter();
+                    param1.ParameterName = "@productid";
+                    param1.SqlDbType = SqlDbType.Int;
+                    param1.Value = productid;
+
+
+
+                    cmd.Parameters.Add(param1);
+
+
+
+                    SqlParameter param2 = new SqlParameter();
+                    param2.ParameterName = "@productname";
+                    param2.SqlDbType = SqlDbType.VarChar;
+                    param2.Value = productname;
+
+
+
+                    cmd.Parameters.Add(param2);
+
+
+
+                    SqlParameter param3 = new SqlParameter();
+                    param3.ParameterName = "@price";
+                    param3.SqlDbType = SqlDbType.Money;
+                    param3.Value = price;
+
+
+
+                    cmd.Parameters.Add(param3);
+
+
+
+                    SqlParameter param4 = new SqlParameter();
+                    param4.ParameterName = "@quantity";
+                    param4.SqlDbType = SqlDbType.Int;
+                    param4.Value = quantity;
+
+
+
+                    cmd.Parameters.Add(param4);
+
+
+
+                    con.Open();
+                    int i = cmd.ExecuteNonQuery();
+                    if (i > 0)
+                    {
+                        Console.WriteLine(productname + "data inserted succesfully");
+                    }
+                }
+
+
+
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
+        }
+        public static void retreiveproducts()
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionstring))
+                {
+                    SqlCommand cmd = new SqlCommand();
+                    cmd.Connection = con;
+                    cmd.CommandText = "usp_selectproducts";
+                    cmd.CommandType = CommandType.StoredProcedure;
+
+
+
+                    con.Open();
+                    using (SqlDataReader rdr = cmd.ExecuteReader())
+                    {
+                        if (rdr.HasRows)
+                        {
+                            while (rdr.Read())
+                            {
+                                Console.WriteLine("{0} {1}  {2} {3}", rdr[0], rdr[1], rdr[2],
+                                    rdr[3]);
+                            }
+                        }
+                        else
+                        {
+                            Console.WriteLine("no records found");
+                        }
+                        rdr.Close();
+                    }
+
+
+
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
+        }
+        public static void updateproductqty()
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionstring))
+                {
+                    SqlCommand cmd = new SqlCommand();
+                    cmd.Connection = con;
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    cmd.CommandText = "usp_updateproduct";
+                    con.Open();
+                    int i = cmd.ExecuteNonQuery();
+                    if (i > 0)
+                    {
+                        Console.WriteLine("product quantity updated successfully");
+                    }
+                    else { Console.WriteLine("all products having good qty "); }
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
+        }
+        public static void deleterecords(int productid)
+        {
+            using (SqlConnection con = new SqlConnection())
+            {
+                SqlCommand cmd = new SqlCommand();
+                cmd.Connection = con;
+                cmd.CommandText = "usp_deleteproducts";
+                cmd.CommandType = CommandType.StoredProcedure;
+                SqlParameter param1 = new SqlParameter();
+                param1.ParameterName = "@productid";
+                param1.SqlDbType = SqlDbType.Int;
+                param1.Value = productid;
+
+
+
+                cmd.Parameters.Add(param1);
+
+
+
+                con.Open();
+                int i = cmd.ExecuteNonQuery();
+            }
+        }
+        public static int calculateamt(int quantity, int price)
+        {
+            return quantity * price;
+        }
+        public static void entersalesinfo(int salesid, int productid, int quantity, int price)
+        {
+            double amount = calculateamt(quantity, price);
+
+
+
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionstring))
+                {
+                    SqlCommand cmd = new SqlCommand();
+                    cmd.Connection = con;
+                    cmd.CommandText = "usp_insertsales";
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    SqlParameter param1 = new SqlParameter();
+                    param1.ParameterName = "@productid";
+                    param1.SqlDbType = SqlDbType.Int;
+                    param1.Value = productid;
+
+
+
+                    cmd.Parameters.Add(param1);
+
+
+
+                    SqlParameter param2 = new SqlParameter();
+                    param2.ParameterName = "@salesid";
+                    param2.SqlDbType = SqlDbType.VarChar;
+                    param2.Value = salesid;
+
+
+
+                    cmd.Parameters.Add(param2);
+
+
+
+                    SqlParameter param3 = new SqlParameter();
+                    param3.ParameterName = "@price";
+                    param3.SqlDbType = SqlDbType.Money;
+                    param3.Value = price;
+
+
+
+                    cmd.Parameters.Add(param3);
+
+
+
+                    SqlParameter param4 = new SqlParameter();
+                    param4.ParameterName = "@quantity";
+                    param4.SqlDbType = SqlDbType.Int;
+                    param4.Value = quantity;
+
+
+
+                    cmd.Parameters.Add(param4);
+
+
+
+                    con.Open();
+                    int i = cmd.ExecuteNonQuery();
+                    if (i > 0)
+                    {
+                        Console.WriteLine(salesid + "data inserted succesfully");
+                    }
+                }
+
+
+
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
+        }
+        public static void retreivesales()
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionstring))
+                {
+                    SqlCommand cmd = new SqlCommand();
+                    cmd.Connection = con;
+                    cmd.CommandText = "usp_retreivesales";
+                    cmd.CommandType = CommandType.StoredProcedure;
+
+
+
+                    con.Open();
+                    using (SqlDataReader rdr = cmd.ExecuteReader())
+                    {
+                        if (rdr.HasRows)
+                        {
+                            while (rdr.Read())
+                            {
+                                Console.WriteLine("{0} {1}  {2} {3}", rdr[0], rdr[1], rdr[2],
+                                    rdr[3]);
+                            }
+                        }
+                        else
+                        {
+                            Console.WriteLine("no records found");
+                        }
+                        rdr.Close();
+                    }
+
+
+
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
+        }
+    }
+}
+
+
+SQLQuery1.sql(Query)
+
+--creating product table
+create table productinfo(
+productid int not null primary key,
+productname varchar(20),
+price money,
+quantity int);
+go
+
+ 
+
+--stored procedure for inserting product data
+create procedure usp_insertproductinfo(@productid int,@productname varchar(20),@price money,@quantity int)
+as
+begin
+insert into productinfo(productid,productname,price,quantity)values(@productid,@productname,@price,@quantity);
+end
+go
+
+ 
+
+--retrieving product data
+create procedure usp_selectproducts
+as
+begin
+select * from productinfo;
+end
+go
+
+ 
+
+--update stored procedure for products table
+create procedure usp_updateproduct
+as
+begin
+update productinfo 
+set quantity=40
+where quantity<10;
+end
+go
+
+ 
+
+--delete procedure
+create procedure usp_deleteproducts(@productid int)
+as
+begin
+delete from productinfo 
+where productid=@productid;
+end
+go
+
+ 
+
+--creating sales table
+create table sales(salesid int not null primary key,
+productid int foreign key references productinfo(productid),
+quantity int,
+price money);
+go
+--insert procedure for sales
+create procedure usp_insertsales(@salesid int,@productid int,@quantity int,@price money)
+as
+begin
+insert into sales(salesid,productid,quantity,price)values(@salesid,@productid,@quantity,@price);
+end
+go
+
+ 
+
+Create procedure usp_retreivesales
+as
+begin
+select * from sales;
+end
+go
+
+Section-2
+
+Problem 1: E-Commerce Website with Inventory Management
+You are tasked with building an e-commerce website for a retail business that sells various
+products. To implement the inventory management, you need to use Entity Framework Core
+to store and update product availability in a database. Use the new Scaffolded Item to create
+automation of the code for CRUD operations.
+
+Customer.cs
+using System.ComponentModel.DataAnnotations;
+
+namespace assessment.model
+{
+    public class Customer
+    {
+        [Key]
+        public int CuId { get; set; }
+        public string? CuName { get; set; }
+        public string? CuAddress { get; set; }
+        public int? Phone_no { get; set; }
+
+        public string? Email { get; set; }
+    }
+}
+
+Orders.cs
+
+using System.ComponentModel.DataAnnotations;
+
+namespace assessment.model
+{
+    public class Orders
+    {
+        [Key]
+        public int OrId { get; set; }
+        public Product? Product { get; set; }
+        public string? OrName { get; set; }
+
+        public int OrQty { get; set; }
+        public float? Amount { get; set; }
+
+        public Customer? Customer { get; set; }
+    }
+}
+
+
+Product.cs
+
+using System.ComponentModel.DataAnnotations;
+
+namespace assessment.model
+{
+    public class Product
+    {
+        [Key]
+        public int PId { get; set; }
+
+        public string? PName { get; set; }
+
+        public string? PPrice { get; set; }
+        public int PQty { get; set; }
+    }
+}
+
+--Nav Bar
+
+<div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
+    <ul class="navbar-nav flex-grow-1">
+        <li class="nav-item">
+            <a class="nav-link text-dark" asp-area="" asp-page="/Index">Home</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link text-dark" asp-area="" asp-page="/products/create">Products</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link text-dark" asp-area="" asp-page="/customer/create">Customers</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link text-dark" asp-area="" asp-page="/orders/create">Orders</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link text-dark" asp-area="" asp-page="/Privacy">Privacy</a>
+        </li>
+    </ul>
+
+
