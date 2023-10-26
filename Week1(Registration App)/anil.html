@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registration Form</title>
+    <link rel="stylesheet" href="styles.css"/>
+</head>
+<body>
+ <h1>Decode Survey Form</h1>
+    <p>Thank you for taking the time to help us improve the platform</p>
+    <form method="POST" action="www.google.com">
+        <fieldset>
+            <label for="fname">Name <input type="text" id="fname" name="fname" text area id="fname" name="fname" placeholder="Enter your name"required></label>
+            <label for="mail">Email <input type="email" id="mail" name="mail" placeholder="Enter your email" required></label>
+            <label for="age">Age (Optional) <input type="number" name="age" id="age" required min="13" max="120" placeholder="Age"></label>
+            <label for="rname">Which option best describes your current role <input type="text" id="lname" name="lname" placeholder="Select current role"required></label>
+            <label for="rename">Would you recommand freeCodeCamp to a friend?<required></label>
+            <label for="Definitely"><input type="radio" id="Definitely" name="account-type" class="inline"/>Definitely</label>
+            <label for="May be"><input type="radio" id="May be" name="account-type" class="inline"/>May be</label>
+            <label for="Not Sure"><input type="radio" id="Not Sure" name="account-type" class="inline"/> Not Sure</label>
+            <label for="feature"placeholder="select an option">What is your Favorite feature of Decode?
+                <select id="feature" name="feature">
+                    <option value="">select an option</option>
+                    <option value="1"> HTML </option>
+                    <option value="2"> CSS </option>
+                    <option value="3"> JAVA SCRIPT </option>
+                    <option value="4"> OTHER</option>
+                </select>
+            <label for="feature">What do you like to see improved?(Check all that apply)   
+                <label for="references"><input type="checkbox" required name=" Front-end Projects" class="inline"/> Front-end Projects</a></label>
+                <label for="references"><input type="checkbox" required name="Back-end Projects" class="inline"/> Back-end Projects</a></label>
+                <label for="references"><input type="checkbox" required name="Data Visualization" class="inline"/> Data Visuvalization</a></label>
+                <label for="references"><input type="checkbox" required name="Challenges" class="inline"/> Challenges</a></label>
+                <label for="references"><input type="checkbox" required name="Open Source Community" class="inline"/> Open Source Community</a></label>
+                <label for="references"><input type="checkbox" required name="Gitter help rooms" class="inline"/> Gitter help rooms</a></label>
+                <label for="references"><input type="checkbox" required name="Videos" class="inline"/> Videos</a></label>
+                <label for="references"><input type="checkbox" required name="City Meetups" class="inline"/> City Meetups</a></label>
+                <label for="references"><input type="checkbox" required name="Wiki" class="inline"/> Wiki</a></label>
+                <label for="references"><input type="checkbox" required name="Digital Library" class="inline"/> Digital Library</a></label>
+            <label for="bio">Any Queries:
+                <textarea id="bio" name="bio" rows="3" cols="30" placeholder="Feel Free to reach out..."></textarea>
+            </label>
+        </fieldset>
+        <input type="submit" value="Submit"/>
+    </form><br>
+</body>
+</html>
