@@ -1,0 +1,79 @@
+G.Anil Kumar(1033310)
+SQL CODING ASSESSMENT
+
+USE AdventureWorks2022;
+GO
+--1.List Product Names and Prices
+Select * From Production.Product
+go
+SELECT name,ListPrice 
+FROM Production.Product
+order by name,ListPrice;
+go
+
+--2.Find Customers from a Specific City
+SELECT 
+    p.FirstName,
+    p.LastName,
+    e.EmailAddress,
+    a.City
+INTO NewCustomerTable
+FROM Person.Person p JOIN Person.EmailAddress e ON p.BusinessEntityID = e.BusinessEntityID
+JOIN  Person.Address a ON p.BusinessEntityID = a.AddressID JOIN Sales.Customer c ON p.BusinessEntityID = c.PersonID;
+--retriveing the data
+select firstname, lastname,EmailAddress,City from NewCustomerTable where city='seattle';
+
+--3.Calculate Total Sales for a Product
+select pp.Name, sum(OrderQty*UnitPrice) as Total_sales
+from Sales.SalesOrderDetail as ss
+join Production.Product as pp
+on ss.ProductID = pp.ProductID
+where pp.ProductID = 793
+group by pp.Name;
+
+
+--4.List Employees by Job Title
+select pp.FirstName , pp.LastName , he.JobTitle
+from HumanResources.Employee he
+join Person.Person pp
+on pp.BusinessEntityID = he.BusinessEntityID
+order by he.JobTitle ASC;
+
+--5. Find Order Details for a Customer
+SELECT a.Name AS ProductName, sd.OrderQty
+FROM Sales.SalesOrderHeader sh
+JOIN Sales.SalesOrderDetail sd ON sh.SalesOrderID = sd.SalesOrderID
+JOIN Production.Product a ON sd.ProductID = a.ProductID
+WHERE sh.CustomerID = 29485;
+
+--6.Find Orders Placed by a Salesperson
+SELECT sh.SalesOrderID AS OrderNumber, sh.OrderDate,pe.firstname,pe.lastname
+FROM Sales.SalesOrderHeader sh join Person.Person pe on pe.BusinessEntityID=sh.SalesPersonID
+where SalesPersonID=276;
+
+--7.Identify Inactive Customers
+SELECT  pe.FirstName, pe.LastName, e.EmailAddress
+FROM Person.Person pe JOIN Person.EmailAddress e 
+ON pe.BusinessEntityID = e.BusinessEntityID Join Sales.Customer s on s.CustomerID=e.BusinessEntityID
+Where s.CustomerID not in
+(select CustomerID from Sales.SalesOrderHeader);
+
+--8.Calculate Average Sales per Category
+SELECT pp.Name AS CategoryName, AVG(sd.LineTotal) AS AverageSalesAmount
+FROM Production.Product AS pp
+JOIN Sales.SalesOrderDetail AS sd
+ON sd.ProductID = pp.ProductID
+GROUP BY pp.Name;
+
+--9.Find Top-Selling Products
+SELECT TOP 10 pp.Name, SUM(ss.OrderQty) AS Total_quantity
+FROM Production.Product pp
+JOIN Sales.SalesOrderDetail ss
+ON pp.ProductID = ss.ProductID
+GROUP BY pp.Name
+ORDER BY Total_quantity;
+
+--10. Identify Late Shipments
+SELECT SalesOrderNumber, ShipDate, DueDate
+FROM Sales.SalesOrderHeader
+WHERE ShipDate < DueDate;
